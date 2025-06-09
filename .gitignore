@@ -4,3 +4,10 @@
 # Ignore logs directory and all its contents
 logs/
 mlflow_airflow/logs/
+
+# Ignorar archivos parquet en cualquier lugar
+*.parquet
+
+# Ignorar carpetas específicas de mlruns/artifacts (ajusta ruta según necesidad)
+mlflow_airflow/mlruns/
+practica_creativa/mlruns/
