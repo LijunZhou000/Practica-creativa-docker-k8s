@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-debug
+  namespace: practica-creativa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spark-debug
+  template:
+    metadata:
+      labels:
+        app: spark-debug
+    spec:
+      containers:
+        - name: spark-debug
+          image: spark-app
+          imagePullPolicy: Never
+          securityContext:
+            runAsUser: 0
+          command: [ "sleep", "infinity" ]
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+          volumeMounts:
+            - name: ivy-cache
+              mountPath: /opt/spark/home/.ivy2
+      volumes:
+        - name: ivy-cache
+          emptyDir: {}

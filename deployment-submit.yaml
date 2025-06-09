@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-submit
+  namespace: practica-creativa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spark-submit
+  template:
+    metadata:
+      labels:
+        app: spark-submit
+    spec:
+      containers:
+        - name: spark-submit
+          image: spark-app
+          imagePullPolicy: Never
+          securityContext:
+            runAsUser: 0
+          command: ["/opt/bitnami/spark/bin/spark-submit"]
+          args:
+            [
+              "--conf", "spark.jars.ivy=/opt/spark/home/.ivy2",
+              "--conf", "spark.driver.host=$(MY_POD_IP)",
+              "--conf", "spark.driver.bindAddress=0.0.0.0",
+              "--conf", "spark.driver.port=7078",
+              "--conf", "spark.blockManager.port=7079",
+              "--conf", "spark.ui.port=4040",
+              "--packages", "org.mongodb.spark:mongo-spark-connector_2.12:10.4.1,org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.3",
+              "--class", "es.upm.dit.ging.predictor.MakePrediction",
+              "--master", "spark://spark-master:7077",
+              "/home/ibdn/docker-k8s/practica_creativa/flight_prediction/target/scala-2.12/flight_prediction_2.12-0.1.jar"
+            ]
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+          env:
+            - name: USER
+              value: root
+            - name: LOGNAME
+              value: root
+            - name: USERNAME
+              value: root
+            - name: HADOOP_USER_NAME
+              value: root
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          volumeMounts:
+            - name: ivy-cache
+              mountPath: /opt/spark/home/.ivy2
+          ports:
+            - containerPort: 7078 # Driver port
+            - containerPort: 7079 # Block manager port
+            - containerPort: 4040 # Spark UI port
+      volumes:
+        - name: ivy-cache
+          emptyDir: {}

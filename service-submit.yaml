@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-submit
+  namespace: practica-creativa
+spec:
+  selector:
+    app: spark-submit
+  ports:
+    - name: driver
+      port: 7078
+      targetPort: 7078
+    - name: blockmanager
+      port: 7079
+      targetPort: 7079
+    - name: ui
+      port: 4040
+      targetPort: 4040
+  clusterIP: None  # optional, if you want direct pod-to-pod communication

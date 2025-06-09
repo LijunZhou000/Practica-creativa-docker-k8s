@@ -1,0 +1,20 @@
+# Imagen base con Python 3.7
+FROM python:3.7-slim
+
+# Establece variable de entorno
+ENV PROJECT_HOME=/home/ibdn/docker-k8s/practica_creativa
+
+# Crea el directorio de trabajo
+WORKDIR /web
+
+# Copia solo los archivos necesarios
+COPY ./practica_creativa/resources/web /web
+
+# Instala dependencias
+RUN python3.7 -m pip install --no-cache-dir -r requirements.txt
+
+# Expone el puerto
+EXPOSE 5001
+
+# Ejecuta la aplicación
+CMD ["python3.7", "predict_flask.py"]

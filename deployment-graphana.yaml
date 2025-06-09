@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: comp-nub-p5-7-prom
+    namespace: practica-creativa
+    labels:
+        role: comp-nub-p5-7-prom
+        version: "1.1"
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            role: comp-nub-p5-7-prom
+            version: "1.1"
+    template:
+        metadata:
+            labels:
+                version: "1.1"
+                role: comp-nub-p5-7-prom
+        spec:
+            containers:
+                - image: prom/prometheus:latest
+                  name: contenedor-comp-nub-p5-7-prom

@@ -1,0 +1,9 @@
+pymongo
+datetime
+iso8601
+joblib
+flask
+pyelasticsearch
+kafka-python
+uuid
+MarkupSafe

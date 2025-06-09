@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-worker
+  namespace: practica-creativa
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: spark-worker
+  template:
+    metadata:
+      labels:
+        app: spark-worker
+    spec:
+      containers:
+        - name: spark-worker
+          image: bitnami/spark:3.5.3
+          env:
+            - name: SPARK_MODE
+              value: "worker"
+            - name: SPARK_MASTER_URL
+              value: "spark://spark-master:7077"
+            - name: SPARK_WORKER_WEBUI_PORT
+              value: "8081"
+            - name: SPARK_WORKER_PORT
+              value: "7000"
+          ports:
+            - containerPort: 8081
+            - containerPort: 7000
+          volumeMounts:
+            - name: code-volume
+              mountPath: /home/ibdn/docker-k8s/practica_creativa/flight_prediction/target/scala-2.12/
+            - name: models-volume
+              mountPath: /home/ibdn/docker-k8s/practica_creativa/models/
+          resources:
+            # No limits - matching Docker behavior  
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+      volumes:
+        - name: code-volume
+          hostPath:
+            path: /home/ibdn/docker-k8s/practica_creativa/flight_prediction/target/scala-2.12/
+            type: DirectoryOrCreate
+        - name: models-volume
+          hostPath:
+            path: /home/ibdn/docker-k8s/practica_creativa/models/
+            type: DirectoryOrCreate
+

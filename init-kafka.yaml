@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: init-kafka
+  namespace: practica-creativa
+spec:
+  template:
+    metadata:
+      name: init-kafka
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: init-kafka
+          image: bitnami/kafka:3.9.0
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              echo 'Esperando que Kafka esté listo...'
+              while ! kafka-topics.sh --bootstrap-server kafka:9092 --list > /dev/null 2>&1; do
+                echo "Esperando Kafka..."
+                sleep 2
+              done
+              kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic flight-delay-ml-request --partitions 1 --replication-factor 1
+              kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic flight-delay-ml-response --partitions 1 --replication-factor 1

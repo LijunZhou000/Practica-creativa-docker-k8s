@@ -1,0 +1,15 @@
+artifact_uri: file:///home/ibdn/docker-k8s/practica_creativa/mlruns/0/9f556b05f76b46f38a015c43aae7c80c/artifacts
+end_time: 1749067926007
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 9f556b05f76b46f38a015c43aae7c80c
+run_name: languid-wasp-987
+run_uuid: 9f556b05f76b46f38a015c43aae7c80c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1749067800674
+status: 4
+tags: []
+user_id: ibdn

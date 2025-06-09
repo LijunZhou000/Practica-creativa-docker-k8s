@@ -1,0 +1,15 @@
+artifact_uri: file:///home/ibdn/docker-k8s/practica_creativa/mlruns/0/066c256c7fde4842a0a68c4f6667f7fb/artifacts
+end_time: 1749069450311
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 066c256c7fde4842a0a68c4f6667f7fb
+run_name: sneaky-ox-425
+run_uuid: 066c256c7fde4842a0a68c4f6667f7fb
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1749069214673
+status: 4
+tags: []
+user_id: ibdn

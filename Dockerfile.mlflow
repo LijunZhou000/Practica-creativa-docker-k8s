@@ -1,0 +1,14 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+COPY requirements.txt /app/requirements.txt
+
+# Instala dependencias
+RUN python3.10 -m pip install --no-cache-dir -r requirements.txt
+
+# Expone el puerto
+EXPOSE 5000
+
+# Ejecuta la aplicación
+CMD ["mlflow", "ui", "--host", "0.0.0.0", "--port", "5000"]

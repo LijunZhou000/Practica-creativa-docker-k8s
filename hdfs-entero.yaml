@@ -1,0 +1,132 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: namenode1
+  namespace: practica-creativa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: namenode1
+  template:
+    metadata:
+      labels:
+        app: namenode1
+    spec:
+      containers:
+        - name: namenode1
+          image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+          ports:
+            - containerPort: 50070
+            - containerPort: 9870
+            - containerPort: 8020
+          env:
+            - name: CLUSTER_NAME
+              value: "example1"
+            - name: INIT_DAEMON_STEP
+              value: "setup_hdfs"
+            - name: HDFS_CONF_dfs_webhdfs_enabled
+              value: "true"
+            - name: HDFS_CONF_dfs_permissions_enabled
+              value: "false"
+            - name: CORE_CONF_hadoop_proxyuser_hue_hosts
+              value: "*"
+            - name: CORE_CONF_hadoop_proxyuser_hue_groups
+              value: "*"
+          volumeMounts:
+            - name: namenode-data
+              mountPath: /hadoop/dfs/name
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - |
+                    echo "Waiting for NameNode to start..."
+                    until hdfs dfsadmin -safemode get | grep -q "Safe mode is OFF"; do
+                      echo "Still in safe mode or NameNode not ready, sleeping..."
+                      sleep 5
+                    done
+                    echo "NameNode is ready. Leaving safe mode..."
+                    hdfs dfsadmin -safemode leave
+      volumes:
+        - name: namenode-data
+          persistentVolumeClaim:
+            claimName: pvc-namenode
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: namenode1
+  namespace: practica-creativa
+spec:
+  selector:
+    app: namenode1
+  ports:
+    - name: http
+      port: 50070
+      targetPort: 50070
+      nodePort: 30070
+    - name: web
+      port: 9870
+      targetPort: 9870
+      nodePort: 30071
+    - name: rpc
+      port: 8020
+      targetPort: 8020
+  type: NodePort
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: datanode1
+  namespace: practica-creativa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: datanode1
+  template:
+    metadata:
+      labels:
+        app: datanode1
+    spec:
+      containers:
+        - name: datanode1
+          image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+          ports:
+            - containerPort: 50075
+            - containerPort: 9864
+          env:
+            - name: CORE_CONF_fs_defaultFS
+              value: "hdfs://namenode1:8020"
+            - name: HDFS_CONF_dfs_webhdfs_enabled
+              value: "true"
+          volumeMounts:
+            - name: datanode-data
+              mountPath: /hadoop/dfs/data
+      volumes:
+        - name: datanode-data
+          persistentVolumeClaim:
+            claimName: pvc-datanode
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: datanode1
+  namespace: practica-creativa
+spec:
+  selector:
+    app: datanode1
+  ports:
+    - name: http
+      port: 50075
+      targetPort: 50075
+    - name: web
+      port: 9864
+      targetPort: 9864
+  type: NodePort

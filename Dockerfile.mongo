@@ -1,0 +1,16 @@
+# Usa la imagen oficial de MongoDB 4.0
+FROM mongo:4.0
+
+# Copia el script y el archivo .jsonl al contenedor
+# COPY practica_creativa-master/resources/import_distances.sh /
+COPY ./practica_creativa/data/origin_dest_distances.jsonl /data/
+COPY ./practica_creativa/resources/import_distances.sh /docker-entrypoint-initdb.d/init.sh
+
+# Da permisos de ejecución al script
+# RUN chmod +x /import_distances.sh
+RUN chmod +x /docker-entrypoint-initdb.d/init.sh
+
+EXPOSE 27017
+
+# Ejecuta el script al iniciar el contenedor
+# CMD ["/import_distances.sh"]
