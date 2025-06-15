@@ -2,8 +2,10 @@
 *.log
 
 # Ignore logs directory and all its contents
-logs/
-mlflow_airflow/logs/
+# logs/
+practica_creativa/resources/airflow/logs/scheduler/latest
+# mlflow_airflow/logs/
+mlflow_airflow/logs/scheduler/latest
 
 # Ignorar archivos parquet en cualquier lugar
 
